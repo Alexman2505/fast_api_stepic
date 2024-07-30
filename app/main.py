@@ -1,6 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
-from models.models import User, User_date
+from models.models import User, User_date, Feedback
 
 
 app = FastAPI()
@@ -39,7 +39,21 @@ fake_users = {
 
 # Конечная точка для получения информации о пользователе по ID
 @app.get("/users/{user_id}")
-def read_user(user_id: int):
+async def read_user(user_id: int):
     if user_id in fake_users:
         return fake_users[user_id]
     return {"error": "User not found"}
+
+
+feedback_db = []
+
+
+# Конечная точка для получения фидбека
+@app.post("/feedback")
+async def read_feedback(user_feedback: Feedback):
+    # тут добавили юзера в фейковую БД
+    feedback_db.append(
+        {"name": user_feedback.name, "message": user_feedback.message}
+    )
+    print(feedback_db)
+    return {"message": f"Feedback received. Thank you {user_feedback.name}!"}
