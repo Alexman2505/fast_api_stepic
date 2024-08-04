@@ -23,3 +23,10 @@ class UserCreate(BaseModel):
     email: EmailStr  # проверка формата почты
     age: Optional[int] = Field(None, gt=1)  # больше 1
     is_subscribed: bool = False
+
+
+class Product(BaseModel):
+    product_id: int
+    name: str
+    category: str
+    price: float

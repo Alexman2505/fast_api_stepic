@@ -1,33 +1,33 @@
 import uvicorn
 from typing import Dict, List
 from fastapi import FastAPI
-from models.models import User, User_date, Feedback, UserCreate
+from models.models import User, User_date, Feedback, UserCreate, Product
 
 
 app = FastAPI()
 
 
-@app.get('/')
+@app.get("/")
 def read_root():
-    return {'message': 'Hello, World!'}
+    return {"message": "Hello, World!"}
 
 
-@app.get('/custom')
+@app.get("/custom")
 def read_custom_message():
-    return {'message': 'Custom message'}
+    return {"message": "Custom message4"}
 
 
-@app.get('/users', response_model=User)
+@app.get("/users", response_model=User)
 async def get_users():
-    return User(**{"name": "Johnа Doss", "id": 1})
+    return User(**{"name": "Johnа Doss4", "id": 1})
 
 
-@app.post('/user')
+@app.post("/user")
 async def user_post(user_data: User_date):
     return {
-        'name': user_data.name,
-        'age': user_data.age,
-        'is_adult': user_data.age >= 18,
+        "name": user_data.name,
+        "age": user_data.age,
+        "is_adult": user_data.age >= 18,
     }
 
 
@@ -60,11 +60,63 @@ async def read_feedback(user_feedback: Feedback):
     return {"message": f"Feedback received. Thank you {user_feedback.name}!"}
 
 
-@app.post('/create_user', response_model=UserCreate)
+@app.post("/create_user", response_model=UserCreate)
 async def create_user(user: UserCreate):
     return user
 
 
+sample_product_1 = {
+    "product_id": 123,
+    "name": "Smartphone",
+    "category": "Electronics",
+    "price": 599.99,
+}
+
+sample_product_2 = {
+    "product_id": 456,
+    "name": "Phone Case",
+    "category": "Accessories",
+    "price": 19.99,
+}
+
+sample_product_3 = {
+    "product_id": 789,
+    "name": "Iphone",
+    "category": "Electronics",
+    "price": 1299.99,
+}
+
+sample_product_4 = {
+    "product_id": 101,
+    "name": "Headphones",
+    "category": "Accessories",
+    "price": 99.99,
+}
+
+sample_product_5 = {
+    "product_id": 202,
+    "name": "Smartwatch",
+    "category": "Electronics",
+    "price": 299.99,
+}
+
+sample_products = [
+    sample_product_1,
+    sample_product_2,
+    sample_product_3,
+    sample_product_4,
+    sample_product_5,
+]
+
+
+@app.get("/product/{product_id}", response_model=Product)
+async def get_product(product: Product):
+    for prod in sample_products:
+        if product.product_id == prod.product_id:
+            return prod
+    return {"error": "product not found"}
+
+
 if __name__ == "__main__":
-    uvicorn.run(app, host='localhost', port=8000)
+    uvicorn.run("main:app", host="localhost", port=8000, reload=True)
     # запуск через python app/main.py
