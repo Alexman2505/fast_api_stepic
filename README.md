@@ -18,20 +18,20 @@
 
 В файле launch.json должно быть такое содержимое (это опараметры запуска дебагера)
 
-{
-"version": "0.2.0",
-"configurations": [
-{
-"name": "Python: FastAPI Debug",
-"type": "debugpy",
-"request": "launch",
-"program": "${workspaceFolder}/run.py",
-"console": "integratedTerminal",
-"justMyCode": true,
-"env": {
-"PYTHONPATH": "${workspaceFolder}"
-}
-}
-]
-}
+\{
+\"version": "0.2.0",
+\"configurations": [
+\{
+\"name": "Python: FastAPI Debug",
+\"type": "debugpy",
+\"request": "launch",
+\"program": "${workspaceFolder}/run.py",
+\"console": "integratedTerminal",
+\"justMyCode": true,
+\"env": {
+\"PYTHONPATH": "${workspaceFolder}"
+\}
+\}
+\]
+\}
 ````
