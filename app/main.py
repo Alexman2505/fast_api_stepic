@@ -1,7 +1,7 @@
 import uvicorn
 from typing import Dict, List
 from fastapi import FastAPI
-from models.models import User, User_date, Feedback
+from models.models import User, User_date, Feedback, UserCreate
 
 
 app = FastAPI()
@@ -46,7 +46,7 @@ async def read_user(user_id: int):
     return {"error": "User not found"}
 
 
-feedback_db = List[Dict[str, str]] = []
+feedback_db: List[Dict[str, str]] = []
 
 
 # Конечная точка для получения фидбека
@@ -58,3 +58,14 @@ async def read_feedback(user_feedback: Feedback):
     )
     print(feedback_db)
     return {"message": f"Feedback received. Thank you {user_feedback.name}!"}
+
+
+@app.post('/create_user', response_model=UserCreate)
+async def create_user(user: UserCreate):
+    return user
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host='localhost', port=8000)

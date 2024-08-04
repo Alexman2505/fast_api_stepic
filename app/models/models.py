@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, EmailStr
+from typing import Optional
 
 
 # создаём модель данных, которая обычно расположена в файле models.py
@@ -15,3 +16,10 @@ class User_date(BaseModel):
 class Feedback(BaseModel):
     name: str
     message: str
+
+
+class UserCreate(BaseModel):
+    name: str
+    email: EmailStr  # проверка формата почты
+    age: Optional[int] = Field(None, gt=1)  # больше 1
+    is_subscribed: bool = False
