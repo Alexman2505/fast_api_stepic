@@ -109,6 +109,9 @@ sample_products = [
 
 @app.get('/products/search')
 def search(keyword: str, category: str = None, limit: int = 10):
+    '''принимает различные параметры запроса и
+    возвращает список, в который добавлены результаты поиска
+    '''
     result = list(
         filter(
             lambda item: keyword.lower() in item['name'].lower(),
@@ -124,6 +127,9 @@ def search(keyword: str, category: str = None, limit: int = 10):
 
 @app.get("/product/{product_id}", response_model=Product)
 async def get_product_info_by_id(product_id: int):
+    '''принимает только параметр пути и возвращает элемент списка,
+    в котором опредленному ключу соответствует значение из поиска
+    '''
     for prod in sample_products:
         if product_id == prod["product_id"]:
             return prod
