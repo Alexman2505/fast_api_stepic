@@ -1,6 +1,5 @@
-import uvicorn
 from typing import Dict, List
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from app.models.models import User, User_date, Feedback, UserCreate, Product
 
 app = FastAPI()
@@ -13,7 +12,7 @@ def read_root():
 
 @app.get("/custom")
 def read_custom_message():
-    return {"message": "Custom message1"}
+    return {"message": "Custom message2"}
 
 
 @app.get("/users", response_model=User)
@@ -78,12 +77,54 @@ sample_product_2 = {
     "price": 19.99,
 }
 
-sample_products = [sample_product_1, sample_product_2]
+sample_product_3 = {
+    "product_id": 789,
+    "name": "Iphone",
+    "category": "Electronics",
+    "price": 1299.99,
+}
+
+sample_product_4 = {
+    "product_id": 101,
+    "name": "Headphones",
+    "category": "Accessories",
+    "price": 99.99,
+}
+
+sample_product_5 = {
+    "product_id": 202,
+    "name": "Smartwatch",
+    "category": "Electronics",
+    "price": 299.99,
+}
+
+sample_products = [
+    sample_product_1,
+    sample_product_2,
+    sample_product_3,
+    sample_product_4,
+    sample_product_5,
+]
+
+
+@app.get('/products/search')
+def search(keyword: str, category: str = None, limit: int = 10):
+    result = list(
+        filter(
+            lambda item: keyword.lower() in item['name'].lower(),
+            sample_products,
+        )
+    )
+    if category:
+        result = list(
+            filter(lambda item: item["category"] == category, result)
+        )
+    return result[:limit]
 
 
 @app.get("/product/{product_id}", response_model=Product)
-async def get_product(product_id: int):
+async def get_product_info_by_id(product_id: int):
     for prod in sample_products:
         if product_id == prod["product_id"]:
             return prod
-    return {"error": "product not found"}
+    raise HTTPException(status_code=404, detail="Product not found")
