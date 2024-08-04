@@ -4,11 +4,11 @@
 
 Обратите внимание, что на структуру проекта:
 
-project_name/<br>
-+-- app/<br>
-| +-- \_\_init\_\_.py<br>
-| +-- main.py<br>
-+-- venv/<br>
+- **project_name**/
+  - **app/**
+    - `__init__.py`
+    - `main.py`
+  - **venv/**
 
 В файле main.py в самом низу прописаны параметры запуска
 
