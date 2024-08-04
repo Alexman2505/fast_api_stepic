@@ -8,32 +8,32 @@
 
 Если хотите запускать и тестироварть проект в режиме дебаггера, то обратите внимание на структуру проекта:
 
-<br>project_name/
-<br>├──.vscode
-<br>│ └── launch.json
-<br>├── app/
-<br>│ └── main.py
-<br>├── venv/
-<br>└── run.py
+-project_name/<br>
+-├──.vscode<br>
+-│ └── launch.json<br>
+-├── app/<br>
+-│ └── main.py<br>
+-├── venv/<br>
+-└── run.py<br>
 
-В файле launch.json должно быть такое содержимое (это опараметры запуска дебагера)
+Содержимое launch.json для удобного запуска дебаггера через f5.
 
-\{
-\"version": "0.2.0",
-\"configurations": [
-\{
-\"name": "Python: FastAPI Debug",
-\"type": "debugpy",
-\"request": "launch",
-\"program": "${workspaceFolder}/run.py",
-\"console": "integratedTerminal",
-\"justMyCode": true,
-\"env": {
-\"PYTHONPATH": "${workspaceFolder}"
-\}
-\}
-\]
-\}
+{<br>
+"version": "0.2.0",<br>
+"configurations": [<br>
+{<br>
+"name": "Python: FastAPI Debug",<br>
+"type": "debugpy",<br>
+"request": "launch",<br>
+"program": "${workspaceFolder}/run.py",<br>
+"console": "integratedTerminal",<br>
+"justMyCode": true,<br>
+"env": {<br>
+"PYTHONPATH": "${workspaceFolder}"<br>
+}<br>
+}<br>
+]<br>
+}<br>
 
 ```
 
