@@ -1,4 +1,5 @@
 import uvicorn
+from typing import Dict, List
 from fastapi import FastAPI
 from models.models import User, User_date, Feedback
 
@@ -45,7 +46,7 @@ async def read_user(user_id: int):
     return {"error": "User not found"}
 
 
-feedback_db = []
+feedback_db = List[Dict[str, str]] = []
 
 
 # Конечная точка для получения фидбека
