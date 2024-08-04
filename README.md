@@ -19,19 +19,19 @@
 
 Проект разрабатывается в IDE vscode, поэтому содержимое launch.json из папки .vscode для удобного запуска дебаггера через кнопку f5 должно быть таким.
 
-{<br>
-"version": "0.2.0",<br>
-"configurations": [<br>
-{<br>
-"name": "Python: FastAPI Debug",<br>
-"type": "debugpy",<br>
-"request": "launch",<br>
-"program": "${workspaceFolder}/run.py",<br>
-"console": "integratedTerminal",<br>
-"justMyCode": true,<br>
-"env": {<br>
-"PYTHONPATH": "${workspaceFolder}"<br>
-}<br>
-}<br>
-]<br>
-}<br>
+{
+"version": "0.2.0",
+"configurations": [
+{
+"name": "Python: FastAPI Debug",
+"type": "debugpy",
+"request": "launch",
+"program": "${workspaceFolder}/run.py",
+"console": "integratedTerminal",
+"justMyCode": true,
+"env": {
+"PYTHONPATH": "${workspaceFolder}"
+}
+}
+]
+}
