@@ -1,32 +1,72 @@
-from fastapi import FastAPI, HTTPException, status, Depends
-from fastapi.security import HTTPBasicCredentials, HTTPBasic
-
-from app.models.models import User
-import uvicorn
-
+from fastapi import FastAPI, Depends
+from fastapi.security import OAuth2PasswordBearer
+from pydantic import BaseModel
+import jwt
+import time
 
 app = FastAPI()
-security = HTTPBasic()
-USER_DATA = [
-    User(**{"username": "JohnD", "password": "qwer1234"}),
-    User(**{"username": "KateL", "password": "tyui5678"}),
-]
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
+# Секретный ключ для подписи и верификации токенов JWT
+SECRET_KEY = "mysecretkey"
+ALGORITHM = "HS256"
+
+# Пример информации из БД
+USERS_DATA = [{"username": "admin", "password": "adminpass"}]
 
 
-def get_user_from_db(username: str) -> User | None:
-    for user in USER_DATA:
-        if user.username == username:
+class User(BaseModel):
+    username: str
+    password: str
+
+
+# Функция для создания JWT токена
+def create_jwt_token(data: dict):
+    return jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)  # кодируем токен
+
+
+# Функция получения User'а по токену
+def check_token(token: str = Depends(oauth2_scheme)):
+    try:
+        payload = jwt.decode(
+            token, SECRET_KEY, algorithms=[ALGORITHM]
+        )  # декодируем токен
+        if time.time() < payload.get("exp"):
+            return payload
+    except:
+        return {"error": "the token is not valid"}
+
+
+# Функция для получения пользовательских данных на основе имени пользователя
+def get_user(username: str):
+    for user in USERS_DATA:
+        if user.get("username") == username:
             return user
     return None
 
 
-@app.post('/login')
-async def login(credentials: HTTPBasicCredentials = Depends(security)):
-    user = get_user_from_db(credentials.username)
-    if user is None or user.password != credentials.password:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            headers={'WWW-Authenticate': 'Basic'},
-        )
+@app.post("/login")
+async def login(user_in: User):
+    for user in USERS_DATA:
+        if (
+            user.get("username") == user_in.username
+            and user.get("password") == user_in.password
+        ):
+            expiration_time = (
+                time.time() + 30
+            )  # время действия токкена 30 секунд с момента его создания
+            return {
+                "access_token": create_jwt_token(
+                    {"sub": user_in.username, "exp": expiration_time}
+                ),
+                "token_type": "bearer",
+            }
+    return {"error": "Invalid credentials"}
 
-    return {'message': 'You got my secret, welcome'}
+
+@app.get("/protected_resource")
+async def about_me(current_user: str = Depends(check_token)):
+    user = get_user(current_user.get("sub"))
+    if user:
+        return {"message": "access is allowed"}
+    return {"error": "access denied"}
