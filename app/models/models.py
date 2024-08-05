@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, EmailStr
-from typing import Optional
+from typing import Optional, Annotated
 
 
 # создаём модель данных, которая обычно расположена в файле models.py
@@ -30,3 +30,8 @@ class Product(BaseModel):
     name: str
     category: str
     price: float
+
+
+class User_cookie(BaseModel):
+    username: str
+    password: str

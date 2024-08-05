@@ -1,17 +1,27 @@
-from typing import Dict, List
-from fastapi import FastAPI, HTTPException
-from app.models.models import User, User_date, Feedback, UserCreate, Product
+from app.models.models import (
+    User,
+    User_date,
+    Feedback,
+    UserCreate,
+    Product,
+    User_cookie,
+)
+from datetime import datetime
+from fastapi import FastAPI, HTTPException, Cookie, Response, Form, Response
+from typing import Dict, List, Annotated
+from uuid import uuid4
+
 
 app = FastAPI()
 
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello, World!"}
+# @app.get("/")
+# async def read_root():
+#     return {"message": "Hello, World!"}
 
 
 @app.get("/custom")
-def read_custom_message():
+async def read_custom_message():
     return {"message": "Custom message2"}
 
 
@@ -69,35 +79,30 @@ sample_product_1 = {
     "category": "Electronics",
     "price": 599.99,
 }
-
 sample_product_2 = {
     "product_id": 456,
     "name": "Phone Case",
     "category": "Accessories",
     "price": 19.99,
 }
-
 sample_product_3 = {
     "product_id": 789,
     "name": "Iphone",
     "category": "Electronics",
     "price": 1299.99,
 }
-
 sample_product_4 = {
     "product_id": 101,
     "name": "Headphones",
     "category": "Accessories",
     "price": 99.99,
 }
-
 sample_product_5 = {
     "product_id": 202,
     "name": "Smartwatch",
     "category": "Electronics",
     "price": 299.99,
 }
-
 sample_products = [
     sample_product_1,
     sample_product_2,
@@ -107,8 +112,9 @@ sample_products = [
 ]
 
 
+# урок 3.1. обработка параметров пути в http запросах
 @app.get('/products/search')
-def search(keyword: str, category: str = None, limit: int = 10):
+async def search(keyword: str, category: str = None, limit: int = 10):
     '''принимает различные параметры запроса и
     возвращает список, в который добавлены результаты поиска
     '''
@@ -125,6 +131,7 @@ def search(keyword: str, category: str = None, limit: int = 10):
     return result[:limit]
 
 
+# урок 3.1. обработка параметров пути в http запросах
 @app.get("/product/{product_id}", response_model=Product)
 async def get_product_info_by_id(product_id: int):
     '''принимает только параметр пути и возвращает элемент списка,
@@ -134,3 +141,48 @@ async def get_product_info_by_id(product_id: int):
         if product_id == prod["product_id"]:
             return prod
     raise HTTPException(status_code=404, detail="Product not found")
+
+
+# урок 3.2 куки
+@app.get("/items/")
+async def read_items(ads_id: str | None = Cookie(default=None)):
+    return {"ads_id": ads_id}
+
+
+@app.get("/")
+async def root(response: Response):
+    now = datetime.now().strftime(
+        "%d/%m/%Y, %H:%M:%S"
+    )  # получаем текущую дату и время
+    response.set_cookie(key="last_visit", value=now)
+    return {"message": f"куки установлены {now}"}
+
+
+# урок 3.2 куки
+user_db_cookie = [
+    {'username': 'JohnD', 'password': 'qwer1234', 'session_token': ''}
+]
+
+
+@app.post('/login')
+async def login_user(
+    response: Response, username: str = Form(), password: str = Form()
+):
+    for user in user_db_cookie:
+        if user['username'] == username and user['password'] == password:
+            user['session_token'] = str(uuid4())
+            response.set_cookie(
+                key='session_token', value=user['session_token'], httponly=True
+            )
+            return {'message': 'Cookie was set.'}
+    return {'message': 'Wrong username or password.'}
+
+
+@app.get('/user')
+async def user_login_via_cookie(
+    session_token: Annotated[str | None, Cookie()] = None
+):
+    for user in user_db_cookie:
+        if session_token and session_token == user['session_token']:
+            return {'username': user['username'], 'password': user['password']}
+    return {'message': 'Unauthorized'}
