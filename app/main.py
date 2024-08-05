@@ -7,7 +7,15 @@ from app.models.models import (
     User_cookie,
 )
 from datetime import datetime
-from fastapi import FastAPI, HTTPException, Cookie, Response, Form, Response
+from fastapi import (
+    FastAPI,
+    HTTPException,
+    Cookie,
+    Response,
+    Form,
+    Response,
+    Header,
+)
 from typing import Dict, List, Annotated
 from uuid import uuid4
 
