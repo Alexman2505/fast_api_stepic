@@ -75,7 +75,7 @@ def get_user(username: str):
 # Роут для получения JWT-токена (так работает логин)
 @app.post("/token/")
 def login(
-    user_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+    user_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ):  # тут логинимся через форму
     user_data_from_db = get_user(user_data.username)
     if (
