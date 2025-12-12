@@ -7,23 +7,18 @@ from pydantic import BaseModel
 import jwt
 from typing import Optional, Annotated
 
-'''тут работаем с библиотекой PyJWT,
-но в реальной жизни вы скорее всего предпочтете 'python-jose', которая чуть шире PyJWT и рекомендуется самими FastAPI
-'''
 
 app = FastAPI()
 
 # Секретный ключ для подписи и верификации токенов JWT
-SECRET_KEY = "mysecretkey"  # тут мы в реальной практике используем что-нибудь вроде команды Bash (Linux) 'openssl rand -hex 32', и храним очень защищенно
-ALGORITHM = (
-    "HS256"  # плюс в реальной жизни мы устанавливаем "время жизни" токена
-)
+SECRET_KEY = "mysecretkey"
+ALGORITHM = "HS256"
 
 # Пример информации из БД
 USERS_DATA = {
     "admin": {"username": "admin", "password": "adminpass", "role": "admin"},
     "user": {"username": "user", "password": "userpass", "role": "user"},
-}  # в реальной БД мы храним только ХЭШИ паролей (можете прочитать про библиотеку, к примеру, 'passlib') + соль (известная только нам добавка к паролю)
+}
 
 # OAuth2PasswordBearer для авторизации по токену
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -44,12 +39,8 @@ def create_jwt_token(data: dict):
 # Функция получения User'а по токену - это скорее всего была самая сложная часть в предыдущем задании
 def get_user_from_token(token: str = Depends(oauth2_scheme)):
     try:
-        payload = jwt.decode(
-            token, SECRET_KEY, algorithms=[ALGORITHM]
-        )  # декодируем токен
-        return payload.get(
-            "sub"
-        )  # тут мы идем в полезную нагрузку JWT-токена и возвращаем утверждение о юзере (subject); обычно там еще можно взять "iss" - issuer/эмитент, или "exp" - expiration time - время 'сгорания' и другое, что мы сами туда кладем
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload.get("sub")
     except jwt.ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
