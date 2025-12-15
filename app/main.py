@@ -10,6 +10,17 @@ from typing import Optional, Annotated
 
 app = FastAPI()
 
+
+@app.get("/")
+def read_root():
+    return {"message": "Hello, World!"}
+
+
+@app.get("/custom")
+def read_custom_message():
+    return {"message": "This is a custom message!"}
+
+
 # Секретный ключ для подписи и верификации токенов JWT
 SECRET_KEY = "mysecretkey"
 ALGORITHM = "HS256"
